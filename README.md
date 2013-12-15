@@ -13,6 +13,8 @@ copyComponents({dest: "./serve/js/vendor"}, function(err, copied) {
 	// `copied` is a list of src->dest pairs.
 });
 
+
+
 ```
 
 
@@ -25,12 +27,14 @@ Installation
 API
 ------------
 ###copyComponents(options, callback)
+Copies all bower components to `{dest}/{component_name}.js`, and returns a list of src -> dest pairs for reference.
 - `options` is a hash with parameters as its properties:
 	- `options.src` is the root `bower_components` directory.  It defaults to `{PROJECT_DIR}/bower_components`.
 	- `options.dest` is the target directory, which will contain the main script files.
 - `callback` has an `err, results` signature, where `results` is an array of objects with `src` and `dest` properties -- one for each script copied.
 
 ###resolveComponents([componentDir,] callback)
+Returns a list of objects indicating the name (`component`) and main script path (`main`) of each component.  This doesn't do any file copying on its own.
 - `componentDir` is the path to `bower_components`.  If only `callback` is passed, this defaults to `{PROJECT_DIR}/bower_components`.
 - `callback` has an `err, results` signature, where `results` is an array of objects with `component` and `main` properties.  `component` is the component's name, and `main` is the path to its main script.
 
