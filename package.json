@@ -1,0 +1,24 @@
+{
+  "name": "bower-copy",
+  "version": "0.0.1",
+  "description": "bower-copy\r ==========",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublish": "coffee -c ./"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scivey/bower-copy.git"
+  },
+  "author": "Scott Ivey",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/scivey/bower-copy/issues"
+  },
+  "dependencies": {
+    "underscore": "~1.5.2",
+    "async": "~0.2.9",
+    "fs-extra": "~0.8.1"
+  }
+}
