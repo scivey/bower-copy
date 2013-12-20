@@ -38,6 +38,16 @@ Returns a list of objects indicating the name (`component`) and main script path
 - `componentDir` is the path to `bower_components`.  If only `callback` is passed, this defaults to `{PROJECT_DIR}/bower_components`.
 - `callback` has an `err, results` signature, where `results` is an array of objects with `component` and `main` properties.  `component` is the component's name, and `main` is the path to its main script.
 
+Changelog
+------------
+
+###0.0.2
+- Now uses`.bower.json` by default, and only resorts to loading `package.json` if `.bower.json` does not specify a `main` property.
+- Correctly handles components with relative path values for `main`, e.g. `./lib/index.js`.  These are rewritten in the form of `{COMPONENT_NAME}/lib/index.js`.
+
+###0.0.1
+- Initial release
+
 GitHub
 ------------
 https://github.com/scivey/bower-copy
