@@ -39,12 +39,12 @@ extractMain = (filePath, data, cb) ->
 	if _match?
 		_main = _match[1]
 
-	console.log _main
-	console.log filePath
+	#console.log _main
+	#console.log filePath
 	_pd = path.dirname(filePath)
-	console.log _pd
+	#console.log _pd
 	mainPath = path.join( path.dirname(filePath), _main )
-	console.log mainPath
+	#console.log mainPath
 	mainPath
 
 # given component's folder name, get the full path to

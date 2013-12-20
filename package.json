@@ -1,6 +1,6 @@
 {
   "name": "bower-copy",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "bower-copy\r ==========",
   "main": "index.js",
   "scripts": {
