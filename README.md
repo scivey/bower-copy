@@ -55,11 +55,9 @@ Returns a list of objects indicating the name (`component`) and main script path
 Changelog
 ------------
 
-###0.3
+###0.1.0
 - Added command line interface for global install.
 - Destination directory is created if it doesn't exist (recursively, with `fs-extra`'s `#mkdirs` method).
-
-
 
 ###0.0.2
 - Now uses`.bower.json` by default, and only resorts to loading `package.json` if `.bower.json` does not specify a `main` property.
