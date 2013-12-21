@@ -46,12 +46,8 @@
     if (_match != null) {
       _main = _match[1];
     }
-    console.log(_main);
-    console.log(filePath);
     _pd = path.dirname(filePath);
-    console.log(_pd);
     mainPath = path.join(path.dirname(filePath), _main);
-    console.log(mainPath);
     return mainPath;
   };
 

@@ -2,8 +2,13 @@ bower-copy
 =================
 Scott Ivey -> http://www.scivey.net
 
-Copy main script files of bower components to an arbitrary destination directory, or resolve a list of component names paired with paths to their main scripts.
+Copy main script files of bower components to an arbitrary destination directory, or resolve a list of component names paired with paths to their main scripts.  Usable on the command line and as a `require`d module.
 
+
+```bash
+$	bower-copy -d ./public/js
+$	bower-copy -s ./someDir/bower_components -d ./public/js
+```
 
 ```javascript
 var copyComponents = require("bower-copy").copyComponents;
@@ -21,7 +26,16 @@ copyComponents({dest: "./serve/js/vendor"}, function(err, copied) {
 Installation
 ------------
 
-    npm install bower-copy
+    npm install bower-copy -g
+
+
+Command Line
+------------
+###bower-copy
+Copy bower components' main scripts to a target directory.
+- `-s`, `--src`: path to bower's component directory, defaulting to `./bower_components`.
+- `d`, `--dest`: path to output directory.  The directory is recursively created if it doesn't exist.
+- `r`, `--resolve`: when passed the `-r` flag, `bower-copy` will output the components' names and the paths to their main scripts in JSON format.  The files won't actually be copied.  This is equivalent to calling `resolveComponents` throug the API.
 
 
 API
@@ -40,6 +54,12 @@ Returns a list of objects indicating the name (`component`) and main script path
 
 Changelog
 ------------
+
+###0.3
+- Added command line interface for global install.
+- Destination directory is created if it doesn't exist (recursively, with `fs-extra`'s `#mkdirs` method).
+
+
 
 ###0.0.2
 - Now uses`.bower.json` by default, and only resorts to loading `package.json` if `.bower.json` does not specify a `main` property.

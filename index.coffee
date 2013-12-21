@@ -80,10 +80,18 @@ copyComponents = (options, cb) ->
 	_opts.src ?= "./bower_components"
 	unless _opts.dest?
 		throw new Error("No destination specified.")
-	fs.readdir _opts.src, (err, folders) ->
-		async.map folders, mainFromFolder, (err, completed) ->
-			async.map completed, copyScriptTo(_opts.dest), (err, copied) ->
-				cb null, copied
+
+	_copyFn = ->
+		fs.readdir _opts.src, (err, folders) ->
+			async.map folders, mainFromFolder, (err, completed) ->
+				async.map completed, copyScriptTo(_opts.dest), (err, copied) ->
+					cb null, copied
+	fs.exists _opts.dest, (exists) ->
+		if exists
+			_copyFn()
+		else
+			fs.mkdirs _opts.dest, (err) ->
+				_copyFn()
 
 # get a list of component names and corresponding main scripts
 resolveComponents = (bowerDir, cb) ->
