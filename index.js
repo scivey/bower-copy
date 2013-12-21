@@ -94,7 +94,7 @@
   };
 
   copyComponents = function(options, cb) {
-    var _opts;
+    var _copyFn, _opts;
     _opts = _.clone(options);
     if (_opts.src == null) {
       _opts.src = "./bower_components";
@@ -102,12 +102,23 @@
     if (_opts.dest == null) {
       throw new Error("No destination specified.");
     }
-    return fs.readdir(_opts.src, function(err, folders) {
-      return async.map(folders, mainFromFolder, function(err, completed) {
-        return async.map(completed, copyScriptTo(_opts.dest), function(err, copied) {
-          return cb(null, copied);
+    _copyFn = function() {
+      return fs.readdir(_opts.src, function(err, folders) {
+        return async.map(folders, mainFromFolder, function(err, completed) {
+          return async.map(completed, copyScriptTo(_opts.dest), function(err, copied) {
+            return cb(null, copied);
+          });
         });
       });
+    };
+    return fs.exists(_opts.dest, function(exists) {
+      if (exists) {
+        return _copyFn();
+      } else {
+        return fs.mkdirs(_opts.dest, function(err) {
+          return _copyFn();
+        });
+      }
     });
   };
 

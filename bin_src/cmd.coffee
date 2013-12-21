@@ -32,13 +32,15 @@ parser.addArgument ["-r", "--resolve"], {
 
 options = parser.parseArgs()
 
+options.src ?= "./bower_components"
+
 if options.resolve
-	resolveComponents "./bower_components", (err, components) ->
+	resolveComponents options.src, (err, components) ->
 		console.log components
 else
 	unless options.dest?
 		throw new Error("No destination specified.")
-	options.src ?= "./bower_components"
+
 
 	copyComponents options, (err, copied) ->
 		console.log "Success."
