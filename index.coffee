@@ -75,7 +75,7 @@ copyScriptTo = (outputDir) ->
 		copyScript scriptRef, outputDir, cb
 
 # copy components' main scripts to a target dir
-copyComponents = (options, cb) ->
+copyComponents = (options, cb) -> 
 	_opts = _.clone(options)
 	_opts.src ?= "./bower_components"
 	unless _opts.dest?
