@@ -24,27 +24,34 @@ readJSON = (filePath, cb) ->
 		_json = JSON.parse(res)
 		cb null, _json
 
+
+# get the relative path for "main" path from the bower components directory
+joinPath = (bowerPath, main) ->
+	_main = main
+	# handle case where _main has a relative
+	# path like "./lib/someScript.js",
+	# which will incorrectly resolve to root package dir.
+	relativeRegex = /^\.\/(.+)$/im
+	_match = relativeRegex.exec _main
+	if _match?
+		_main = _match[1]
+	path.join( path.dirname(bowerPath), main )
+
+
 # given the parsed JSON data, extract the "main" property
 # and prepend the appropriate path.
 extractMain = (filePath, data, cb) ->
 	_main = data.main
 
-	# handle case where _main has a relative
-	# path like "./lib/someScript.js",
-	# which will incorrectly resolve to root package dir.
 	unless _main?
 		return null
-	relativeRegex = /^\.\/(.+)$/im
-	_match = relativeRegex.exec _main
-	if _match?
-		_main = _match[1]
 
-	#console.log _main
-	#console.log filePath
-	_pd = path.dirname(filePath)
-	#console.log _pd
-	mainPath = path.join( path.dirname(filePath), _main )
-	#console.log mainPath
+	# console.log "main", _main
+	# console.log "filePath", filePath
+	mainPath = if Array.isArray _main then joinPath filePath,p for p in _main else [joinPath filePath,_main]
+		
+	# mainPath = path.join( path.dirname(filePath), _main )
+	# console.log "mainPath", mainPath
 	mainPath
 
 # given component's folder name, get the full path to
@@ -52,8 +59,10 @@ extractMain = (filePath, data, cb) ->
 mainFromFolder = (folderName, cb) ->
 	_filePath = inBowerDir(folderName, ".bower.json")
 	readJSON _filePath, (err, pkg) ->
+		# console.log "mainFromFolder::filepath", _filePath TODO: delete
 		mainPath = extractMain(_filePath, pkg)
-		if mainPath?
+		
+		if mainPath.length > 0
 			cb null, {component: folderName, main: mainPath}
 		else
 			_filePath = inBowerDir(folderName, "package.json")
@@ -62,20 +71,35 @@ mainFromFolder = (folderName, cb) ->
 				cb null, {component: folderName, main: mainPath}
 
 
+copyMain = (scriptRef, outputDir, cb) ->
+	scriptPaths = scriptRef.main
+	filesToCopy = scriptPaths.length
 
+	copyScript = (scriptRef, outputDir, cb) ->
+		scriptPath = scriptRef.main
+  
+	cbHandler = (scriptPath, outputPath) -> (err) ->
+  	if filesToCopy == 1 then cb null, {src: scriptPath, dest: outputPath}
+  	filesToCopy--
+  
+	scriptPaths.forEach (p) ->
+		outputPath = path.join(outputDir, path.basename(p))
+		fs.copy p, outputPath, cbHandler p, outputPath
+	
+	# scriptPaths = scriptRef.main
+	# outputPath = scriptPath.map( (p) -> path.join(outputDir, path.basename(p)))	
+	# #outputPath = path.join outputDir, path.basename p for p in scriptPath
+	# filesToCopy = scriptPath.length
+	# (scriptPath for scriptPath in scriptPaths)
+	# fs.copy scriptPath, outputPath, (err) ->
+	# 	cb null, {src: scriptPath, dest: outputPath}
 
-copyScript = (scriptRef, outputDir, cb) ->
-	scriptPath = scriptRef.main
-	outputPath = path.join(outputDir, scriptRef.component) + ".js"
-	fs.copy scriptPath, outputPath, (err) ->
-		cb null, {src: scriptPath, dest: outputPath}
-
-copyScriptTo = (outputDir) ->
+copyMainTo = (outputDir) ->
 	(scriptRef, cb) ->
-		copyScript scriptRef, outputDir, cb
+		copyMain scriptRef, outputDir, cb
 
 # copy components' main scripts to a target dir
-copyComponents = (options, cb) ->
+copyComponents = (options, cb) -> 
 	_opts = _.clone(options)
 	_opts.src ?= "./bower_components"
 	unless _opts.dest?
@@ -84,7 +108,7 @@ copyComponents = (options, cb) ->
 	_copyFn = ->
 		fs.readdir _opts.src, (err, folders) ->
 			async.map folders, mainFromFolder, (err, completed) ->
-				async.map completed, copyScriptTo(_opts.dest), (err, copied) ->
+				async.map completed, copyMainTo(_opts.dest), (err, copied) ->
 					cb null, copied
 	fs.exists _opts.dest, (exists) ->
 		if exists

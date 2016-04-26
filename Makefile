@@ -3,11 +3,11 @@ SHELLSTUB=$(BINSRC_DIR)/shell_stub.txt
 BINSRC=$(BINSRC_DIR)/cmd.js
 BINOUTPUT=./bin/cmd.js
 
-main: compile bin
+all: **/*.js *.js $(BINOUTPUT)
 
-compile:
-	coffee -c ./
+%.js: %.coffee
+	npm run coffee -- ./$<
 
-bin: compile
+$(BINOUTPUT): $(SHELLSTUB) $(BINSRC)
 	cat $(SHELLSTUB) $(BINSRC) > $(BINOUTPUT)
 
